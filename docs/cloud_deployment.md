@@ -34,7 +34,7 @@ The Cloud Run service for the backend needs an identity to securely access other
 
 ```bash
 # Define service account name (optional, adjust if needed)
-export BACKEND_SA_NAME="livewire-backend"
+export BACKEND_SA_NAME="bernard-websocket"
 export GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project)
 
 # Create the service account
@@ -94,12 +94,12 @@ gcloud builds submit --config server/cloudbuild.yaml
 *   **What `server/cloudbuild.yaml` does:**
     *   Builds a Docker image using `server/Dockerfile`.
     *   Pushes the image to Google Container Registry (or Artifact Registry).
-    *   Deploys the image to Cloud Run as a service named `livewire-backend`.
+    *   Deploys the image to Cloud Run as a service named `bernard-websocket`.
     *   Sets the region (default `us-central1` - modify YAML if needed).
     *   Allows unauthenticated access (for easy client connection - **consider restricting access in production**).
     *   Sets the container port to `8081`.
     *   Sets environment variables (`GOOGLE_CLOUD_PROJECT`, `LOG_LEVEL`). You can add more here (like `GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_LOCATION`, or Function URLs if not using secrets).
-    *   Assigns the `livewire-backend` service account created earlier.
+    *   Assigns the `bernard-websocket` service account created earlier.
 
 ### 4. Get the Backend Service URL
 
@@ -107,7 +107,7 @@ After the deployment finishes, retrieve the URL of the backend service.
 
 ```bash
 # Replace us-central1 if you deployed to a different region
-export BACKEND_URL=$(gcloud run services describe livewire-backend --platform managed --region us-central1 --format 'value(status.url)')
+export BACKEND_URL=$(gcloud run services describe bernard-websocket --platform managed --region us-central1 --format 'value(status.url)')
 
 # Verify the URL (should start with https://...)
 echo "Backend URL: ${BACKEND_URL}"
@@ -164,11 +164,11 @@ Open the `FRONTEND_URL` in your web browser to use the deployed Project Livewire
     *   Check the Cloud Build logs in the Google Cloud Console for detailed error messages.
     *   Ensure the Cloud Build service account has necessary permissions (e.g., to push to Container Registry, deploy to Cloud Run).
 *   **Cloud Run Service Errors:**
-    *   Check the "Logs" tab for your `livewire-backend` and `livewire-ui` services in the Cloud Run section of the Google Cloud Console.
+    *   Check the "Logs" tab for your `bernard-websocket` and `livewire-ui` services in the Cloud Run section of the Google Cloud Console.
     *   **Backend:** Look for errors related to Secret Manager access (check IAM roles), API key validity, connection issues to Gemini, or problems calling Cloud Functions. Ensure `GOOGLE_CLOUD_PROJECT` is correctly passed or available.
     *   **Frontend:** Look for nginx errors or issues serving files. Ensure the backend URL was correctly passed during the build and is accessible.
 *   **Connection Issues (Client <-> Server):**
-    *   Verify the WebSocket URL used by the client correctly points to the `wss://` version of the `livewire-backend` service URL.
+    *   Verify the WebSocket URL used by the client correctly points to the `wss://` version of the `bernard-websocket` service URL.
     *   Ensure both Cloud Run services allow ingress traffic (e.g., `--allow-unauthenticated` was used, or appropriate authentication is configured if restricted). Check firewall rules if applicable.
-*   **Secret Manager Access Denied:** Double-check that the `livewire-backend` service account has the `roles/secretmanager.secretAccessor` role assigned in IAM.
+*   **Secret Manager Access Denied:** Double-check that the `bernard-websocket` service account has the `roles/secretmanager.secretAccessor` role assigned in IAM.
 *   **Quota Errors:** Monitor API usage (Gemini, Cloud Functions, etc.) in the Google Cloud Console. You might be hitting free tier limits or project quotas.

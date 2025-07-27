@@ -149,7 +149,7 @@ The server prioritizes configuration sources in the following order:
 2. **Retrieve the deployed service URL:**
    After successful deployment, get the URL of your Cloud Run service:
    ```bash
-   gcloud run services describe livewire-backend --platform managed --region us-central1 --format 'value(status.url)'
+   gcloud run services describe bernard-websocket --platform managed --region us-central1 --format 'value(status.url)'
    ```
 
 3. **Get the Frontend URL:**
@@ -176,7 +176,7 @@ You can easily test your deployed WebSocket server using `wscat`, a command-line
 2. **Save and prepare the server URL:**
    ```bash
    # Save the Cloud Run URL to a variable
-   export CLOUD_RUN_URL=$(gcloud run services describe livewire-backend --platform managed --region us-central1 --format 'value(status.url)')
+   export CLOUD_RUN_URL=$(gcloud run services describe bernard-websocket --platform managed --region us-central1 --format 'value(status.url)')
    
    # Print the URL to verify (should start with https://)
    echo $CLOUD_RUN_URL

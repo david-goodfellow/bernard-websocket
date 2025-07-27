@@ -53,13 +53,12 @@ async def create_gemini_session(shared_mcp_session=None):
                 project=project_id,
             )
         else:
-            # API Key configuration
-            api_key = os.getenv("GEMINI_API_KEY")
-            if not api_key:
-                raise ConfigurationError("GEMINI_API_KEY is required")
+            # API Key configuration - use the key from api_config instead of environment
+            if not api_config.api_key:
+                raise ConfigurationError("No API key available from Secret Manager or environment")
 
             logger.info("Initializing Gemini client with API key")
-            client = genai.Client(api_key=api_key)
+            client = genai.Client(api_key=api_config.api_key)
 
         # Use shared MCP session if provided, otherwise create new one
         mcp_session = shared_mcp_session
@@ -76,19 +75,32 @@ async def create_gemini_session(shared_mcp_session=None):
             from core.mcp_session import create_mcp_tool
             mcp_tool = create_mcp_tool(mcp_session)
             
-            # Merge MCP function declarations into the first tool's function_declarations
-            if tools_config and "function_declarations" in tools_config[0]:
-                tools_config[0]["function_declarations"].extend(mcp_tool["function_declarations"])
+            # Find the tool that has function_declarations
+            function_tool = None
+            for tool in tools_config:
+                if "function_declarations" in tool:
+                    function_tool = tool
+                    break
+            
+            # Merge MCP function declarations into the existing function_declarations tool
+            if function_tool:
+                function_tool["function_declarations"].extend(mcp_tool["function_declarations"])
                 logger.info("MCP function declarations merged into existing tool")
+                logger.info(f"Total function declarations: {len(function_tool['function_declarations'])}")
             else:
-                # If no existing tool structure, add MCP tool as new tool
+                # If no existing function_declarations tool, add MCP tool as new tool
                 tools_config.append(mcp_tool)
                 logger.info("MCP tool added as new tool")
-            
-            logger.info(f"Total function declarations: {len(tools_config[0]['function_declarations'])}")
+                logger.info(f"Total function declarations: {len(mcp_tool['function_declarations'])}")
         else:
+            # Find the tool that has function_declarations for logging
+            function_tool = None
+            for tool in tools_config:
+                if "function_declarations" in tool:
+                    function_tool = tool
+                    break
             logger.info("No MCP session available, using existing tools only")
-            logger.info(f"Total function declarations: {len(tools_config[0]['function_declarations']) if tools_config else 0}")
+            logger.info(f"Total function declarations: {len(function_tool['function_declarations']) if function_tool else 0}")
 
         # Create the session with updated tools
         session_config = CONFIG.copy()

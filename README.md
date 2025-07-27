@@ -1,4 +1,4 @@
-# Project Livewire 
+# Bernard Gemini Live API Websocket 
 
 **Talk to AI like never before! Project Livewire is a real-time, multimodal chat application showcasing the power of Gemini 2.0 Flash (experimental) Live API.**
 
@@ -81,7 +81,7 @@ This uses Cloud Build to containerize and deploy the client & server. For more d
     *   Set your project: `gcloud config set project YOUR_GOOGLE_CLOUD_PROJECT`
     *   Enable APIs (Run, Cloud Build, Secret Manager, etc.).
     *   Create Secrets (`GOOGLE_API_KEY`, `OPENWEATHER_API_KEY`) in Secret Manager.
-    *   Create a Service Account (`livewire-backend`) with Secret Accessor role.
+    *   Create a Service Account (`bernard-websocket`) with Secret Accessor role.
     *   Deploy Tool Functions (See [Cloud Functions Guide](./cloud-functions/README.md)).
 
 2.  **Deploy Backend:**
@@ -90,7 +90,7 @@ This uses Cloud Build to containerize and deploy the client & server. For more d
     gcloud builds submit --config server/cloudbuild.yaml
     ```
 
-3.  **Get Backend URL:** Note the URL output by the previous command (or use `gcloud run services describe livewire-backend...`). Let's call it `YOUR_BACKEND_URL`.
+3.  **Get Backend URL:** Note the URL output by the previous command (or use `gcloud run services describe bernard-websocket...`). Let's call it `YOUR_BACKEND_URL`.
 
 4.  **Deploy Frontend:**
     ```bash

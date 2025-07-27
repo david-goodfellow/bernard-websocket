@@ -64,18 +64,7 @@ class ApiConfig:
         logger.info(f"Initialized API configuration with Vertex AI: {self.use_vertex}")
 
     async def initialize(self):
-        """Initialize API credentials."""
-        try:
-            # Always try to get OpenWeather API key regardless of endpoint
-            self.weather_api_key = get_secret("OPENWEATHER_API_KEY")
-        except Exception as e:
-            logger.warning(
-                f"Failed to get OpenWeather API key from Secret Manager: {e}"
-            )
-            self.weather_api_key = os.getenv("OPENWEATHER_API_KEY")
-            if not self.weather_api_key:
-                raise ConfigurationError("OpenWeather API key not available")
-
+        """Initialize API credentials."""  
         if not self.use_vertex:
             try:
                 self.api_key = get_secret("GOOGLE_API_KEY")
@@ -101,8 +90,7 @@ else:
 
 # Cloud Function URLs with validation
 CLOUD_FUNCTIONS = {
-    "get_weather": os.getenv("WEATHER_FUNCTION_URL"),
-    "get_weather_forecast": os.getenv("FORECAST_FUNCTION_URL"),
+    # Removed weather-related functions - no longer needed
     "get_next_appointment": os.getenv("CALENDAR_FUNCTION_URL"),
     "get_past_appointments": os.getenv("PAST_APPOINTMENTS_FUNCTION_URL"),
 }
@@ -125,6 +113,7 @@ except Exception as e:
 logger.info(f"System instructions: {SYSTEM_INSTRUCTIONS}")
 
 # Gemini Configuration
+# TODO: Remove the weather
 CONFIG = {
     "generation_config": {"response_modalities": ["AUDIO"], "speech_config": VOICE},
     "tools": [
